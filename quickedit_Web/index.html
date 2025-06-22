@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickEdit - Chỉnh sửa nội dung web nhanh chóng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset & base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #fff;
+      color: #222;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a {
+      color: #1070ca;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #1070ca;
+      user-select: none;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #333;
+      cursor: pointer;
+    }
+    nav a:hover {
+      color: #1070ca;
+    }
+    #lang-select {
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      background: white;
+      color: #222;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #1070ca;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: #444;
+    }
+    .hero .btn-group {
+      display: inline-flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 26px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1070ca;
+      border: 2px solid #1070ca;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      text-decoration: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background-color: #1070ca;
+      color: white;
+    }
+
+    /* Features grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+    .feature-card {
+      border: 1px solid #ddd;
+      padding: 24px;
+      border-radius: 12px;
+      background-color: #fafafa;
+      transition: border-color 0.3s ease;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+    }
+    .feature-card:hover {
+      border-color: #1070ca;
+      box-shadow: 0 4px 12px rgb(16 112 202 / 0.3);
+    }
+    .feature-card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      color: #1070ca;
+    }
+    .feature-card p {
+      margin: 0;
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    /* Sections side by side */
+    .side-by-side {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 70px;
+    }
+    .side-by-side > section {
+      flex: 1 1 45%;
+      min-width: 280px;
+    }
+    section h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1070ca;
+      border-left: none;
+      padding-left: 0;
+    }
+    /* Guide list */
+    #guide ol {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      padding-left: 20px;
+      margin: 0;
+      color: #444;
+    }
+    #guide ol li {
+      margin-bottom: 14px;
+    }
+
+    /* Feedback form */
+    #feedback form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #222;
+    }
+    #feedback form textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+      color: #222;
+    }
+    #feedback form textarea:focus {
+      outline: none;
+      border-color: #1070ca;
+      box-shadow: 0 0 8px rgba(16,112,202,0.3);
+    }
+    #feedback form button {
+      margin-top: 12px;
+      float: right;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: 700;
+      background-color: #1070ca;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    #feedback form button:hover {
+      background-color: #0b4d85;
+    }
+
+    /* FAQ */
+    #faq .faq-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #faq .faq-item {
+      border-bottom: 1px solid #ddd;
+      padding: 16px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    #faq .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #1070ca;
+      font-size: 1.05rem;
+      padding-left: 10px;
+    }
+    #faq .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      font-size: 1rem;
+      color: #555;
+      margin-top: 8px;
+      line-height: 1.4;
+      transition: max-height 0.35s ease;
+      padding-left: 20px;
+    }
+    #faq .faq-item.active .faq-answer {
+      max-height: 500px; /* đủ lớn để hiện hết nội dung */
+    }
+    #faq .faq-toggle {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #1070ca;
+      user-select: none;
+      transition: transform 0.3s ease;
+    }
+    #faq .faq-item.active .faq-toggle {
+      transform: rotate(45deg);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #f9f9f9;
+      text-align: center;
+      padding: 18px 24px;
+      font-size: 0.85rem;
+      color: #888;
+      border-top: 1px solid #ddd;
+      user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .side-by-side {
+        flex-direction: column;
+      }
+      .side-by-side > section {
+        flex: 1 1 100%;
+      }
+    }
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        gap: 14px;
+        margin-top: 12px;
+      }
+      nav a {
+        font-size: 0.9rem;
+      }
+      #lang-select {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="logo" aria-label="QuickEdit Logo">QuickEdit</div>
+    <nav role="navigation" aria-label="Main menu">
+      <a href="#features" data-i18n="navFeatures">Tính năng</a>
+      <a href="#guide" data-i18n="navGuide">Hướng dẫn</a>
+      <a href="#faq" data-i18n="navFAQ">FAQ</a>
+      <select id="lang-select" aria-label="Chọn ngôn ngữ">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+      </select>
+    </nav>
+  </header>
+
+  <main class="container" role="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title" data-i18n="heroTitle">Chỉnh sửa nội dung web nhanh chóng</h1>
+      <p data-i18n="heroDesc">QuickEdit giúp bạn chỉnh sửa nội dung website dễ dàng, không cần lập trình.</p>
+      <div class="btn-group">
+        <a href="https://github.com/DuyNguyen2k6/quick-edit_Extension/releases/download/extension/QuickEdit.zip" target="_blank" class="btn" data-i18n="btnSourceCode">Tải Source Code</a>
+        <a href="https://chrome.google.com/webstore/detail/html-quick-edit/fkpebgagpomomfmobmjmpkgehjgnogfk" target="_blank" class="btn" data-i18n="btnChromeStore">Tải từ Chrome Store</a>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-title">
+      <h2 id="features-title" data-i18n="featuresTitle">Tính năng nổi bật</h2>
+      <div class="features">
+        <article class="feature-card">
+          <h3 data-i18n="feature1Title">Chỉnh sửa nhanh</h3>
+          <p data-i18n="feature1Desc">Thay đổi nội dung chỉ với 1 cú nhấp chuột.</p>
+        </article>
+        <article class="feature-card">
+          <h3 data-i18n="feature2Title">Dễ sử dụng</h3>
+          <p data-i18n="feature2Desc">Không cần biết lập trình, giao diện thân thiện.</p>
+        </article>
+        <article class="feature-card">
+          <h3 data-i18n="feature3Title">Tiện lợi học tập</h3>
+          <p data-i18n="feature3Desc">Phù hợp cho demo, trình bày, thử nghiệm ý tưởng.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="side-by-side">
+      <section id="guide" aria-labelledby="guide-title">
+        <h2 id="guide-title" data-i18n="guideTitle">Hướng dẫn sử dụng</h2>
+        <ol>
+          <li data-i18n="guideStep1">Giải nén file QuickEdit_Extension.zip</li>
+          <li data-i18n="guideStep2">Mở Chrome → Truy cập chrome://extensions</li>
+          <li data-i18n="guideStep3">Bật Chế độ nhà phát triển (Developer Mode)</li>
+          <li data-i18n="guideStep4">Nhấn Load unpacked → chọn thư mục giải nén</li>
+        </ol>
+      </section>
+
+      <section id="feedback" aria-labelledby="feedback-title">
+        <h2 id="feedback-title" data-i18n="feedbackTitle">Góp ý cho QuickEdit</h2>
+        <form action="https://formspree.io/f/mgvkoapj" method="POST" autocomplete="off">
+          <label for="message" data-i18n="feedbackLabel">Nội dung góp ý</label>
+          <textarea id="message" name="message" placeholder="" required></textarea>
+          <button type="submit" class="btn" data-i18n="feedbackBtn">Gửi góp ý</button>
+        </form>
+      </section>
+    </div>
+
+    <section id="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title" data-i18n="faqTitle">Câu hỏi thường gặp</h2>
+      <ul class="faq-list">
+        <li class="faq-item">
+          <div class="faq-question" tabindex="0">
+            <span data-i18n="faq1Q">QuickEdit có miễn phí không?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            <p data-i18n="faq1A">Có! Hoàn toàn miễn phí cho mọi người dùng.</p>
+          </div>
+        </li>
+        <li class="faq-item">
+          <div class="faq-question" tabindex="0">
+            <span data-i18n="faq2Q">Có cần internet để sử dụng?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            <p data-i18n="faq2A">Không. Sau khi cài đặt, bạn có thể dùng offline.</p>
+          </div>
+        </li>
+        <li class="faq-item">
+          <div class="faq-question" tabindex="0">
+            <span data-i18n="faq3Q">Dùng được trên trình duyệt nào?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            <p data-i18n="faq3A">Hiện tại hỗ trợ Chrome và Edge mới (Chromium).</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p data-i18n="footerText">© 2025 Duy Nguyễn 2kar6. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const translations = {
+      vi: {
+        navFeatures: "Tính năng",
+        navGuide: "Hướng dẫn",
+        navFAQ: "FAQ",
+        btnSourceCode: "Tải Source Code",
+        btnChromeStore: "Tải từ Chrome Store",
+        heroTitle: "Chỉnh sửa nội dung web nhanh chóng",
+        heroDesc: "QuickEdit giúp bạn chỉnh sửa nội dung website dễ dàng, không cần lập trình.",
+        featuresTitle: "Tính năng nổi bật",
+        feature1Title: "Chỉnh sửa nhanh",
+        feature1Desc: "Thay đổi nội dung chỉ với 1 cú nhấp chuột.",
+        feature2Title: "Dễ sử dụng",
+        feature2Desc: "Không cần biết lập trình, giao diện thân thiện.",
+        feature3Title: "Tiện lợi học tập",
+        feature3Desc: "Phù hợp cho demo, trình bày, thử nghiệm ý tưởng.",
+        guideTitle: "Hướng dẫn sử dụng",
+        guideStep1: "Giải nén file QuickEdit_Extension.zip",
+        guideStep2: "Mở Chrome → Truy cập chrome://extensions",
+        guideStep3: "Bật Chế độ nhà phát triển (Developer Mode)",
+        guideStep4: "Nhấn Load unpacked → chọn thư mục giải nén",
+        feedbackTitle: "Góp ý cho QuickEdit",
+        feedbackLabel: "Nội dung góp ý",
+        feedbackBtn: "Gửi góp ý",
+        faqTitle: "Câu hỏi thường gặp",
+        faq1Q: "QuickEdit có miễn phí không?",
+        faq1A: "Có! Hoàn toàn miễn phí cho mọi người dùng.",
+        faq2Q: "Có cần internet để sử dụng?",
+        faq2A: "Không. Sau khi cài đặt, bạn có thể dùng offline.",
+        faq3Q: "Dùng được trên trình duyệt nào?",
+        faq3A: "Hiện tại hỗ trợ Chrome và Edge mới (Chromium).",
+        footerText: "© 2025 Duy Nguyễn 2kar6. All rights reserved."
+      },
+      en: {
+        navFeatures: "Features",
+        navGuide: "Guide",
+        navFAQ: "FAQ",
+        btnSourceCode: "Download Source Code",
+        btnChromeStore: "Download from Chrome Store",
+        heroTitle: "Quickly edit web content",
+        heroDesc: "QuickEdit helps you easily edit website content without coding.",
+        featuresTitle: "Key Features",
+        feature1Title: "Fast Editing",
+        feature1Desc: "Change content with a single click.",
+        feature2Title: "Easy to Use",
+        feature2Desc: "No coding skills needed, user-friendly interface.",
+        feature3Title: "Great for Learning",
+        feature3Desc: "Perfect for demos, presentations, and experiments.",
+        guideTitle: "How to Use",
+        guideStep1: "Extract QuickEdit_Extension.zip",
+        guideStep2: "Open Chrome → Go to chrome://extensions",
+        guideStep3: "Enable Developer Mode",
+        guideStep4: "Click Load unpacked → select extracted folder",
+        feedbackTitle: "Feedback for QuickEdit",
+        feedbackLabel: "Your feedback",
+        feedbackBtn: "Send feedback",
+        faqTitle: "Frequently Asked Questions",
+        faq1Q: "Is QuickEdit free?",
+        faq1A: "Yes! Completely free for all users.",
+        faq2Q: "Do I need internet to use it?",
+        faq2A: "No. Once installed, you can use it offline.",
+        faq3Q: "Which browsers are supported?",
+        faq3A: "Currently supports Chrome and new Chromium-based Edge.",
+        footerText: "© 2025 Duy Nguyễn 2kar6. All rights reserved."
+      }
+    };
+
+    function setLanguage(lang) {
+      const elements = document.querySelectorAll("[data-i18n]");
+      elements.forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+
+      const textarea = document.getElementById("message");
+      if (lang === "vi") {
+        textarea.placeholder = "Nhập góp ý của bạn...";
+      } else {
+        textarea.placeholder = "Enter your feedback...";
+      }
+
+      localStorage.setItem("siteLang", lang);
+    }
+
+    document.getElementById("lang-select").addEventListener("change", e => {
+      setLanguage(e.target.value);
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedLang = localStorage.getItem("siteLang") || "vi";
+      document.getElementById("lang-select").value = savedLang;
+      setLanguage(savedLang);
+    });
+
+    document.querySelectorAll('.faq-question').forEach((question) => {
+      question.addEventListener('click', () => {
+        const item = question.parentElement;
+        item.classList.toggle('active');
+      });
+      question.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          question.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
